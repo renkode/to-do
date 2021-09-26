@@ -1,0 +1,52 @@
+.edit-btn {
+    width: 30px;
+    height: 30px;
+    background-color: rgb(64, 140, 255);
+    font-weight: bold;
+    border: 0px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: rgb(13, 99, 212);
+    transition: background-color .15s;
+}
+
+.del-btn {
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255, 64, 80);
+    font-weight: bold;
+    border: 0px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.del-btn:hover {
+    background-color: rgb(212, 13, 29);
+    transition: background-color .15s;
+}
+
+.fa-pen-to-square, .fa-trash-alt {
+    color: white;
+    pointer-events: none;
+    font-size: 18px;
+}
+
+.task {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid black;
+    width: 50%;
+}
+
+.checkbox, .edit-btn, .del-btn {
+    margin: 0.5em;
+}
+
+.actions {
+    margin-left:auto;
+}

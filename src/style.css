@@ -1,4 +1,4 @@
-.edit-btn {
+#edit-btn {
     width: 30px;
     height: 30px;
     background-color: rgb(64, 140, 255);
@@ -9,12 +9,12 @@
     color: white;
 }
 
-.edit-btn:hover {
+#edit-btn:hover {
     background-color: rgb(13, 99, 212);
     transition: background-color .15s;
 }
 
-.del-btn {
+#del-btn {
     width: 30px;
     height: 30px;
     background-color: rgba(255, 64, 80);
@@ -24,7 +24,7 @@
     border-radius: 4px;
 }
 
-.del-btn:hover {
+#del-btn:hover {
     background-color: rgb(212, 13, 29);
     transition: background-color .15s;
 }
@@ -43,7 +43,7 @@
     width: 50%;
 }
 
-.checkbox, .edit-btn, .del-btn {
+.checkbox, #edit-btn, #del-btn {
     margin: 0.5em;
 }
 

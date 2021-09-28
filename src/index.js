@@ -14,6 +14,7 @@ class TaskManager {
 
     loadTasks(){
         var tasks = JSON.parse(window.localStorage.getItem("tasks"));
+        if (!tasks) return;
         for (var task of tasks) {
           this.tasks.push(task);
           DOMManager.addTask(task);
@@ -25,7 +26,7 @@ class TaskManager {
     }
 
     createTask(project, title, description, date) {
-        let task = new Task(project, title, description, date);
+        let task = new Task(project, this.tasks.length, title, description, date);
         this.tasks.push(task);
         this.saveTasks();
         return task;
@@ -39,15 +40,22 @@ class TaskManager {
         this.saveTasks();
     }
 
-    deleteTask(task){
-        let index = this.tasks.indexOf(task);
-        this.tasks.splice(index,1);
-        this.saveProjects();
+    updateId(){
+        for (var i = 0; i < this.tasks.length; i++){
+            this.tasks[i].id = i;
+        }
+    }
+
+    deleteTask(id){
+        this.tasks.splice(id,1);
+        this.updateId();
+        this.saveTasks();
     }
 }
 
 class Task {
-    constructor(project, title, description, date, checked) {
+    constructor(project, id, title, description, date, checked) {
+        this.id = id;
         this.project = project;
         this.title = title;
         this.description = description;
@@ -64,6 +72,7 @@ class ProjectManager {
 
     loadProjects(){
         var projects = JSON.parse(window.localStorage.getItem("projects"));
+        if (!projects) return;
         for (var proj of projects) {
           this.projects.push(proj);
           DOMManager.addProject(proj);
@@ -76,6 +85,11 @@ class ProjectManager {
 
     createProject(project) {
         this.projects.push(project);
+        this.saveProjects();
+    }
+
+    deleteProject(index){
+        this.projects.splice(index,1);
         this.saveProjects();
     }
 
@@ -94,16 +108,52 @@ let DOMManager = (function(){
     let projectList = document.getElementById("project-list");
     let newTaskBtn = document.getElementById("new-task-btn");
     let taskList = document.getElementById("task-list");
+    let allTasks = document.getElementById("all-tasks");
+
+    function filterTasks(project){
+        let taskNodes = Array.from(taskList.childNodes);
+        taskNodes.shift(); // remove empty node
+        if (project) {
+            for (var i = 0; i < taskManager.tasks.length; i++) {
+                if (taskManager.tasks[i].project !== project) {
+                    taskNodes[i].style.display = "none";
+                } else {
+                    taskNodes[i].style.display = "";
+                }
+                
+            }
+        } else {
+            for (var node of taskNodes) {
+                node.style.display = "";
+            }
+        }
+    }
+
+    let setCurrentProject = function(e){
+        projectList.childNodes.forEach(proj => {
+            if (proj.nodeName !== "LI") return;
+            proj.classList.remove("current-project");
+        });
+        if(projectManager.projects.includes(e.target.textContent)) {
+            projectManager.currentProject = e.target.textContent;
+        } else {
+            projectManager.currentProject = "";
+        }
+        e.target.classList.add("current-project");
+        filterTasks(projectManager.currentProject);
+    }
 
     function addProject(project) {
         let proj = document.createElement("li");
         proj.className = "project";
         proj.textContent = project;
+        proj.addEventListener("click", setCurrentProject)
         projectList.appendChild(proj);
     }
 
     function addTask(task) {
         let div = document.createElement("div");
+        div.id = task.id;
         div.className = "task";
         let checkbox = document.createElement("input");
         checkbox.type = "checkbox";
@@ -116,11 +166,25 @@ let DOMManager = (function(){
         actions.className = "actions";
         actions.innerHTML = "<button id='edit-btn'><i class='fas fa-edit'></i></button><button id='del-btn'><i class='fas fa-trash-alt'></i></button>";
         actions.lastChild.addEventListener("click", function(e){
-            let currentList = document.getElementById("task-list");
-            console.log(currentList.childNodes);
+            let taskNode = e.target.parentNode.parentNode;
+            taskManager.deleteTask(taskNode.id);
+            removeTask(taskNode);
+            updateTaskId();
         })
         div.append(checkbox,title,actions);
         taskList.appendChild(div);
+    }
+
+    function removeTask(node) {
+        taskList.removeChild(node);
+    }
+
+    function updateTaskId() {
+        let tasks = Array.from(taskList.childNodes);
+        tasks.shift(); // remove empty node
+        for (var i = 0; i < tasks.length; i++){
+            tasks[i].id = `${i}`;
+        }
     }
 
     newProjectBtn.addEventListener("click", () => {
@@ -130,9 +194,12 @@ let DOMManager = (function(){
     })
     
     newTaskBtn.addEventListener("click", () => {
-        let task = taskManager.createTask(projectManager.projects[0],"draw hoshua sex","","",false);
+        let task = taskManager.createTask(projectManager.currentProject,`draw hoshua sex ${taskManager.tasks.length}`,"","",false);
         addTask(task);
+        console.log(taskManager.tasks);
     })
+
+    allTasks.addEventListener("click", setCurrentProject);
 
     return { addProject, addTask };
 })();

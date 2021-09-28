@@ -2,10 +2,6 @@ import './style.css';
 import Sortable from 'sortablejs';
 
 var taskList = document.getElementById('task-list');
-Sortable.create(taskList, {
-    animation: 150,
-    ghostClass: 'blue-background-class'
-});
 
 class TaskManager {
     constructor() {
@@ -105,22 +101,24 @@ let taskManager = new TaskManager();
 
 let DOMManager = (function(){
     let newProjectBtn = document.getElementById("new-project-btn");
+    let delProjBtn = document.getElementById("del-project-btn");
     let projectList = document.getElementById("project-list");
     let newTaskBtn = document.getElementById("new-task-btn");
     let taskList = document.getElementById("task-list");
     let allTasks = document.getElementById("all-tasks");
+    let tasksToday = document.getElementById("tasks-today");
+    let tasksThisWeek = document.getElementById("tasks-this-week");
 
     function filterTasks(project){
         let taskNodes = Array.from(taskList.childNodes);
         taskNodes.shift(); // remove empty node
-        if (project) {
+        if (projectManager.projects.includes(project)) {
             for (var i = 0; i < taskManager.tasks.length; i++) {
                 if (taskManager.tasks[i].project !== project) {
                     taskNodes[i].style.display = "none";
                 } else {
                     taskNodes[i].style.display = "";
-                }
-                
+                }  
             }
         } else {
             for (var node of taskNodes) {
@@ -129,26 +127,40 @@ let DOMManager = (function(){
         }
     }
 
-    let setCurrentProject = function(e){
+    function swapTo(node) {
+        // non event version
         projectList.childNodes.forEach(proj => {
             if (proj.nodeName !== "LI") return;
             proj.classList.remove("current-project");
         });
-        if(projectManager.projects.includes(e.target.textContent)) {
-            projectManager.currentProject = e.target.textContent;
+        node.classList.add("current-project");
+        projectManager.currentProject = node.textContent;
+        filterTasks(node.textContent);
+    }
+
+    let setAsCurrentProject = function(e){
+        swapTo(e.target);
+        if (projectManager.projects.includes(projectManager.currentProject)) {
+            delProjBtn.disabled = false;
         } else {
-            projectManager.currentProject = "";
+            delProjBtn.disabled = true;
         }
-        e.target.classList.add("current-project");
-        filterTasks(projectManager.currentProject);
     }
 
     function addProject(project) {
         let proj = document.createElement("li");
         proj.className = "project";
         proj.textContent = project;
-        proj.addEventListener("click", setCurrentProject)
+        proj.addEventListener("click", setAsCurrentProject)
         projectList.appendChild(proj);
+        return proj;
+    }
+
+    function removeCurrentProject() {
+        for (var node of projectList.childNodes){
+            if (node.nodeName !== "LI") continue;
+            if (node.classList.contains("current-project")) projectList.removeChild(node);     
+        };
     }
 
     function addTask(task) {
@@ -190,8 +202,18 @@ let DOMManager = (function(){
     newProjectBtn.addEventListener("click", () => {
         let project = prompt("Project name");
         projectManager.createProject(project);
-        addProject(project);
+        let node = addProject(project);
+        swapTo(node);
     })
+
+    delProjBtn.addEventListener("click", () => {
+        let curProj = projectManager.currentProject;
+        if (projectManager.projects.includes(curProj)) {
+            removeCurrentProject();
+            projectManager.deleteCurrentProject();
+        }
+        swapTo(projectList.childNodes[1]);
+    });
     
     newTaskBtn.addEventListener("click", () => {
         let task = taskManager.createTask(projectManager.currentProject,`draw hoshua sex ${taskManager.tasks.length}`,"","",false);
@@ -199,7 +221,9 @@ let DOMManager = (function(){
         console.log(taskManager.tasks);
     })
 
-    allTasks.addEventListener("click", setCurrentProject);
+    allTasks.addEventListener("click", setAsCurrentProject);
+    tasksToday.addEventListener("click", setAsCurrentProject);
+    tasksThisWeek.addEventListener("click", setAsCurrentProject);
 
     return { addProject, addTask };
 })();
@@ -207,3 +231,18 @@ let DOMManager = (function(){
 projectManager.loadProjects();
 taskManager.loadTasks();
 console.log(taskManager.tasks);
+Sortable.create(taskList, {
+    animation: 150,
+    ghostClass: 'blue-background-class',
+    group: "localStorage-example",
+	store: {
+		get: function (sortable) {
+			var order = localStorage.getItem(sortable.options.group.name);
+			return order ? order.split('|') : [];
+		},
+		set: function (sortable) {
+			var order = sortable.toArray();
+			localStorage.setItem(sortable.options.group.name, order.join('|'));
+		}
+	}
+});

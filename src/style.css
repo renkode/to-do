@@ -1,3 +1,7 @@
+html {
+    font-family: sans-serif;
+}
+
 .project {
     cursor: pointer;
     text-transform: capitalize;
@@ -60,6 +64,14 @@
     margin: 0.5em;
 }
 
+.task-date {
+    margin-left:auto;
+}
+
 .actions {
     margin-left:auto;
+}
+
+select, select option, option {
+    text-transform: capitalize;
 }

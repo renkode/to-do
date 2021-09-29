@@ -27,6 +27,7 @@
     "webpack-dev-server": "^4.2.1"
   },
   "dependencies": {
+    "date-fns": "^2.24.0",
     "sortablejs": "^1.14.0"
   }
 }

@@ -1,11 +1,13 @@
 import './style.css';
 import Sortable from 'sortablejs';
+import { format, isToday, isThisWeek, parseISO } from 'date-fns'
 
 var taskList = document.getElementById('task-list');
 
 class TaskManager {
     constructor() {
         this.tasks = [];
+        this.editingTask = "";
     }
 
     loadTasks(){
@@ -91,8 +93,7 @@ class ProjectManager {
 
     deleteCurrentProject() {
         let index = this.projects.indexOf(this.currentProject);
-        this.projects.splice(index,1);
-        this.saveProjects();
+        this.deleteProject(index);
     }
 }
 
@@ -108,27 +109,64 @@ let DOMManager = (function(){
     let allTasks = document.getElementById("all-tasks");
     let tasksToday = document.getElementById("tasks-today");
     let tasksThisWeek = document.getElementById("tasks-this-week");
+    let unsorted = document.getElementById("unsorted");
+    let projectDropDwn = document.getElementById("project-input");
+    let dateInput = document.getElementById("date-input");
+    dateInput.setAttribute("min",format(new Date(), "yyyy-MM-dd"));
+    dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
+    let log = document.getElementById("console");
+    log.addEventListener("click", ()=>{console.table(taskManager.tasks)});
+    
 
-    function filterTasks(project){
+    function filterTasks(type){
         let taskNodes = Array.from(taskList.childNodes);
         taskNodes.shift(); // remove empty node
-        if (projectManager.projects.includes(project)) {
-            for (var i = 0; i < taskManager.tasks.length; i++) {
-                if (taskManager.tasks[i].project !== project) {
-                    taskNodes[i].style.display = "none";
-                } else {
-                    taskNodes[i].style.display = "";
-                }  
-            }
-        } else {
-            for (var node of taskNodes) {
-                node.style.display = "";
-            }
+        switch (true) {
+            case (projectManager.projects.includes(type)):
+                for (var i = 0; i < taskManager.tasks.length; i++) {
+                    if (taskManager.tasks[i].project !== type) {
+                        taskNodes[i].style.display = "none";
+                    } else {
+                        taskNodes[i].style.display = "";
+                    }  
+                }
+                break;
+            case (type === "unsorted"):
+                for (var i = 0; i < taskManager.tasks.length; i++) {
+                    if (!projectManager.projects.includes(taskManager.tasks[i].project)) {
+                        taskNodes[i].style.display = "";
+                    } else {
+                        taskNodes[i].style.display = "none";
+                    }  
+                }
+                break;
+            case (type === "today"):
+                for (var i = 0; i < taskManager.tasks.length; i++) {
+                    if (isToday(parseISO(taskManager.tasks[i].date))) {
+                        taskNodes[i].style.display = "";
+                    } else {
+                        taskNodes[i].style.display = "none";
+                    }  
+                }
+                break;
+            case (type === "this week"):
+                for (var i = 0; i < taskManager.tasks.length; i++) {
+                    if (isThisWeek(parseISO(taskManager.tasks[i].date))) {
+                        taskNodes[i].style.display = "";
+                    } else {
+                        taskNodes[i].style.display = "none";
+                    }  
+                }
+                break;
+            default:
+                for (var node of taskNodes) {
+                    node.style.display = "";
+                }
+                break;
         }
     }
 
     function swapTo(node) {
-        // non event version
         projectList.childNodes.forEach(proj => {
             if (proj.nodeName !== "LI") return;
             proj.classList.remove("current-project");
@@ -136,15 +174,15 @@ let DOMManager = (function(){
         node.classList.add("current-project");
         projectManager.currentProject = node.textContent;
         filterTasks(node.textContent);
-    }
-
-    let setAsCurrentProject = function(e){
-        swapTo(e.target);
         if (projectManager.projects.includes(projectManager.currentProject)) {
             delProjBtn.disabled = false;
         } else {
             delProjBtn.disabled = true;
         }
+    }
+
+    let setAsCurrentProject = function(e){
+        swapTo(e.target);
     }
 
     function addProject(project) {
@@ -153,7 +191,23 @@ let DOMManager = (function(){
         proj.textContent = project;
         proj.addEventListener("click", setAsCurrentProject)
         projectList.appendChild(proj);
+        addProjectToDropDwn(proj.textContent);
         return proj;
+    }
+
+    function addProjectToDropDwn(name) {
+        let option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        projectDropDwn.appendChild(option);
+    }
+
+    function populateProjectDropDwn() {
+        projectDropDwn.innerHTML = "";
+        addProjectToDropDwn("Unsorted");
+        for (var proj of projectManager.projects) {
+            addProjectToDropDwn(proj);
+        }
     }
 
     function removeCurrentProject() {
@@ -174,6 +228,9 @@ let DOMManager = (function(){
         let title = document.createElement("span");
         title.className = "task-title";
         title.textContent = task.title;
+        let date = document.createElement("span");
+        date.className = "task-date";
+        date.textContent = format(parseISO(task.date), "MMM do");
         let actions = document.createElement("span");
         actions.className = "actions";
         actions.innerHTML = "<button id='edit-btn'><i class='fas fa-edit'></i></button><button id='del-btn'><i class='fas fa-trash-alt'></i></button>";
@@ -181,14 +238,9 @@ let DOMManager = (function(){
             let taskNode = e.target.parentNode.parentNode;
             taskManager.deleteTask(taskNode.id);
             removeTask(taskNode);
-            updateTaskId();
         })
-        div.append(checkbox,title,actions);
+        div.append(checkbox,title,date,actions);
         taskList.appendChild(div);
-    }
-
-    function removeTask(node) {
-        taskList.removeChild(node);
     }
 
     function updateTaskId() {
@@ -197,6 +249,10 @@ let DOMManager = (function(){
         for (var i = 0; i < tasks.length; i++){
             tasks[i].id = `${i}`;
         }
+    }
+    function removeTask(node) {
+        taskList.removeChild(node);
+        updateTaskId();
     }
 
     newProjectBtn.addEventListener("click", () => {
@@ -213,24 +269,25 @@ let DOMManager = (function(){
             projectManager.deleteCurrentProject();
         }
         swapTo(projectList.childNodes[1]);
+        populateProjectDropDwn();
     });
     
     newTaskBtn.addEventListener("click", () => {
-        let task = taskManager.createTask(projectManager.currentProject,`draw hoshua sex ${taskManager.tasks.length}`,"","",false);
+        let task = taskManager.createTask(projectManager.currentProject,`lorem ipsum ${taskManager.tasks.length}`,"This is a description",new Date(),false);
         addTask(task);
-        console.log(taskManager.tasks);
     })
 
     allTasks.addEventListener("click", setAsCurrentProject);
     tasksToday.addEventListener("click", setAsCurrentProject);
     tasksThisWeek.addEventListener("click", setAsCurrentProject);
+    unsorted.addEventListener("click", setAsCurrentProject);
 
-    return { addProject, addTask };
+    return { addProject, addTask, populateProjectDropDwn };
 })();
 
 projectManager.loadProjects();
 taskManager.loadTasks();
-console.log(taskManager.tasks);
+DOMManager.populateProjectDropDwn();
 Sortable.create(taskList, {
     animation: 150,
     ghostClass: 'blue-background-class',

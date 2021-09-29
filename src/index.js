@@ -40,16 +40,20 @@ class TaskManager {
         this.saveTasks();
     }
 
-    updateId(){
-        for (var i = 0; i < this.tasks.length; i++){
-            this.tasks[i].id = i;
-        }
-    }
-
     deleteTask(id){
         let index = this.tasks.map(e => e.id).indexOf(id);
         this.tasks.splice(index,1);
-        //this.updateId();
+        this.saveTasks();
+    }
+
+    deleteProjectTasks(project){
+        let remove = [];
+        for (var task of this.tasks) {
+            if (task.project === project) remove.push(task);
+        }
+        this.tasks = this.tasks.filter(function(task){
+            return !remove.includes(task);
+        });
         this.saveTasks();
     }
 }
@@ -108,6 +112,7 @@ let DOMManager = (function(){
     let delProjBtn = document.getElementById("del-project-btn");
     let projectList = document.getElementById("project-list");
     let newTaskBtn = document.getElementById("new-task-btn");
+    let taskList = document.getElementById("task-list");
     let allTasks = document.getElementById("all-tasks");
     let tasksToday = document.getElementById("tasks-today");
     let tasksThisWeek = document.getElementById("tasks-this-week");
@@ -212,7 +217,16 @@ let DOMManager = (function(){
         }
     }
 
+    function removeCurrentProjectTasks() {
+        for (var task of Array.from(taskList.childNodes)) {
+            if (task.nodeName === "DIV" && !task.style.display) {
+                removeTask(task);
+            }
+        }
+    }
+
     function removeCurrentProject() {
+        removeCurrentProjectTasks();
         for (var node of projectList.childNodes){
             if (node.nodeName !== "LI") continue;
             if (node.classList.contains("current-project")) projectList.removeChild(node);     
@@ -223,6 +237,7 @@ let DOMManager = (function(){
         let div = document.createElement("div");
         div.id = task.id;
         div.className = "task";
+        div.style.display = "";
         let checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.value = false;
@@ -245,20 +260,13 @@ let DOMManager = (function(){
         taskList.appendChild(div);
     }
 
-    function updateTaskId() {
-        let tasks = Array.from(taskList.childNodes);
-        tasks.shift(); // remove empty node
-        for (var i = 0; i < tasks.length; i++){
-            tasks[i].id = `${i}`;
-        }
-    }
     function removeTask(node) {
         taskList.removeChild(node);
-        //updateTaskId();
     }
 
     newProjectBtn.addEventListener("click", () => {
         let project = prompt("Project name");
+        if (!project) return;
         projectManager.createProject(project);
         let node = addProject(project);
         swapTo(node);
@@ -267,6 +275,7 @@ let DOMManager = (function(){
     delProjBtn.addEventListener("click", () => {
         let curProj = projectManager.currentProject;
         if (projectManager.projects.includes(curProj)) {
+            taskManager.deleteProjectTasks(curProj);
             removeCurrentProject();
             projectManager.deleteCurrentProject();
         }
@@ -285,14 +294,13 @@ let DOMManager = (function(){
     tasksThisWeek.addEventListener("click", setAsCurrentProject);
     unsorted.addEventListener("click", setAsCurrentProject);
 
-    return { addProject, addTask, populateProjectDropDwn };
+    return { taskList, addProject, addTask, populateProjectDropDwn };
 })();
 
-let taskList = document.getElementById("task-list");
 projectManager.loadProjects();
 taskManager.loadTasks();
 DOMManager.populateProjectDropDwn();
-Sortable.create(taskList, {
+Sortable.create(DOMManager.taskList, {
     animation: 150,
     ghostClass: 'blue-background-class',
     group: "localStorage-example",

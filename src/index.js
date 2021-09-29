@@ -2,7 +2,9 @@ import './style.css';
 import Sortable from 'sortablejs';
 import { format, isToday, isThisWeek, parseISO } from 'date-fns'
 
-var taskList = document.getElementById('task-list');
+var ID = function () {
+    return '_' + Math.random().toString(36).substr(2, 9);
+  };
 
 class TaskManager {
     constructor() {
@@ -24,7 +26,7 @@ class TaskManager {
     }
 
     createTask(project, title, description, date) {
-        let task = new Task(project, this.tasks.length, title, description, date);
+        let task = new Task(project, ID(), title, description, date);
         this.tasks.push(task);
         this.saveTasks();
         return task;
@@ -45,8 +47,9 @@ class TaskManager {
     }
 
     deleteTask(id){
-        this.tasks.splice(id,1);
-        this.updateId();
+        let index = this.tasks.map(e => e.id).indexOf(id);
+        this.tasks.splice(index,1);
+        //this.updateId();
         this.saveTasks();
     }
 }
@@ -105,7 +108,6 @@ let DOMManager = (function(){
     let delProjBtn = document.getElementById("del-project-btn");
     let projectList = document.getElementById("project-list");
     let newTaskBtn = document.getElementById("new-task-btn");
-    let taskList = document.getElementById("task-list");
     let allTasks = document.getElementById("all-tasks");
     let tasksToday = document.getElementById("tasks-today");
     let tasksThisWeek = document.getElementById("tasks-this-week");
@@ -252,7 +254,7 @@ let DOMManager = (function(){
     }
     function removeTask(node) {
         taskList.removeChild(node);
-        updateTaskId();
+        //updateTaskId();
     }
 
     newProjectBtn.addEventListener("click", () => {
@@ -273,7 +275,8 @@ let DOMManager = (function(){
     });
     
     newTaskBtn.addEventListener("click", () => {
-        let task = taskManager.createTask(projectManager.currentProject,`lorem ipsum ${taskManager.tasks.length}`,"This is a description",new Date(),false);
+        let today = new Date();
+        let task = taskManager.createTask(projectManager.currentProject,`lorem ipsum ${taskManager.tasks.length}`,"This is a description",new Date().toISOString(),false);
         addTask(task);
     })
 
@@ -285,6 +288,7 @@ let DOMManager = (function(){
     return { addProject, addTask, populateProjectDropDwn };
 })();
 
+let taskList = document.getElementById("task-list");
 projectManager.loadProjects();
 taskManager.loadTasks();
 DOMManager.populateProjectDropDwn();

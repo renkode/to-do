@@ -75,3 +75,7 @@ html {
 select, select option, option {
     text-transform: capitalize;
 }
+
+i {
+    pointer-events: none;
+} 

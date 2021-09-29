@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <link rel="stylesheet" href="../../src/style.css">
+        <script src="https://kit.fontawesome.com/e09d9d3a54.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <button id="new-project-btn">New Project</button>
+        <div id="project-container">
+            <ul id="project-list">Tasks
+                <li id="all-tasks" class="project current-project">all</li>
+                <li id="tasks-today" class="project">today</li>
+                <li id="tasks-this-week" class="project">this week</li>
+                <li id="unsorted" class="project">unsorted</li>
+            </ul>
+        </div>
+        <button id="new-task-btn">New Placeholder Task</button>
+        <button id="del-project-btn" disabled="true">Delete Project</button>
+        <button id="console">console.log</button>
+        <div id="task-list">
+        </div>
+
+        <div class="edit-window">
+            <!--<button id="exit-button">X</button>-->
+            <h1 class="edit-task">Edit Task (currently doesn't do anything)</h1>
+            <form id="edit-form" onsubmit="return false">
+                <span><b>Title:</b></span>
+                <label for="title"></label>
+                <input type="text" id="title-input" name="title" required>
+                <span><b>Project:</b></span>
+                <label for="project"></label>
+                <select id="project-input" name="project">
+                </select>
+                <span><b>Due Date:</b></span>
+                <label for="date"></label>
+                <input type="date" id="date-input" name="date" required>
+                <span><b>Details:</b></span>
+                <label for="desc"></label>
+                <input type="text" id="desc-input" name="desc">
+                <input type="submit" id="submit-edit" value="Submit">
+            </form>
+        </div>
+        <script src="main.js"></script>
+    </body>
+</html>

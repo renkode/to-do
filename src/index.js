@@ -3,6 +3,7 @@ import Sortable from 'sortablejs';
 import { format, isToday, isThisWeek, parseISO } from 'date-fns'
 
 var ID = function () {
+    // generate random id in order to sync DOM and object data
     return '_' + Math.random().toString(36).substr(2, 9);
   };
 
@@ -117,15 +118,20 @@ let DOMManager = (function(){
     let tasksToday = document.getElementById("tasks-today");
     let tasksThisWeek = document.getElementById("tasks-this-week");
     let unsorted = document.getElementById("unsorted");
-    let projectDropDwn = document.getElementById("project-input");
+
+    let titleInput = document.getElementById("title-input");
+    let projectInput = document.getElementById("project-input");
     let dateInput = document.getElementById("date-input");
+    let descInput = document.getElementById("desc-input");
     dateInput.setAttribute("min",format(new Date(), "yyyy-MM-dd"));
     dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
+
     let log = document.getElementById("console");
     log.addEventListener("click", ()=>{console.table(taskManager.tasks)});
     
 
     function filterTasks(type){
+        // display tasks depending on current tab
         let taskNodes = Array.from(taskList.childNodes);
         taskNodes.shift(); // remove empty node
         switch (true) {
@@ -174,6 +180,7 @@ let DOMManager = (function(){
     }
 
     function swapTo(node) {
+        // swap to a project tab
         projectList.childNodes.forEach(proj => {
             if (proj.nodeName !== "LI") return;
             proj.classList.remove("current-project");
@@ -198,35 +205,35 @@ let DOMManager = (function(){
         proj.textContent = project;
         proj.addEventListener("click", setAsCurrentProject)
         projectList.appendChild(proj);
-        addProjectToDropDwn(proj.textContent);
+        addProjectToDropDown(proj.textContent);
         return proj;
     }
 
-    function addProjectToDropDwn(name) {
+    function addProjectToDropDown(name) {
         let option = document.createElement("option");
         option.value = name;
         option.textContent = name;
-        projectDropDwn.appendChild(option);
+        projectInput.appendChild(option);
     }
 
-    function populateProjectDropDwn() {
-        projectDropDwn.innerHTML = "";
-        addProjectToDropDwn("Unsorted");
+    function populateProjectDropDown() {
+        projectInput.innerHTML = "";
+        addProjectToDropDown("Unsorted");
         for (var proj of projectManager.projects) {
-            addProjectToDropDwn(proj);
+            addProjectToDropDown(proj);
         }
     }
 
-    function removeCurrentProjectTasks() {
+    function clearCurrentProjectTasks() {
         for (var task of Array.from(taskList.childNodes)) {
             if (task.nodeName === "DIV" && !task.style.display) {
-                removeTask(task);
+                clearTask(task);
             }
         }
     }
 
-    function removeCurrentProject() {
-        removeCurrentProjectTasks();
+    function clearCurrentProject() {
+        clearCurrentProjectTasks();
         for (var node of projectList.childNodes){
             if (node.nodeName !== "LI") continue;
             if (node.classList.contains("current-project")) projectList.removeChild(node);     
@@ -238,29 +245,44 @@ let DOMManager = (function(){
         div.id = task.id;
         div.className = "task";
         div.style.display = "";
+
         let checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.value = false;
         checkbox.className = "checkbox";
+
         let title = document.createElement("span");
         title.className = "task-title";
         title.textContent = task.title;
+
         let date = document.createElement("span");
         date.className = "task-date";
         date.textContent = format(parseISO(task.date), "MMM do");
+
         let actions = document.createElement("span");
         actions.className = "actions";
         actions.innerHTML = "<button id='edit-btn'><i class='fas fa-edit'></i></button><button id='del-btn'><i class='fas fa-trash-alt'></i></button>";
+
+        // edit button
+        actions.firstChild.addEventListener("click", function(e){
+            let taskNode = e.target.parentNode.parentNode;
+            let task = taskManager.tasks.find(t => t.id === taskNode.id);
+            titleInput.value = task.title;
+            projectManager.projects.includes(task.project) ? projectInput.value = task.project : projectInput.value = "Unsorted";
+        })
+
+        // delete button
         actions.lastChild.addEventListener("click", function(e){
             let taskNode = e.target.parentNode.parentNode;
             taskManager.deleteTask(taskNode.id);
-            removeTask(taskNode);
+            clearTask(taskNode);
         })
+
         div.append(checkbox,title,date,actions);
         taskList.appendChild(div);
     }
 
-    function removeTask(node) {
+    function clearTask(node) {
         taskList.removeChild(node);
     }
 
@@ -276,11 +298,11 @@ let DOMManager = (function(){
         let curProj = projectManager.currentProject;
         if (projectManager.projects.includes(curProj)) {
             taskManager.deleteProjectTasks(curProj);
-            removeCurrentProject();
+            clearCurrentProject();
             projectManager.deleteCurrentProject();
         }
         swapTo(projectList.childNodes[1]);
-        populateProjectDropDwn();
+        populateProjectDropDown();
     });
     
     newTaskBtn.addEventListener("click", () => {
@@ -294,12 +316,12 @@ let DOMManager = (function(){
     tasksThisWeek.addEventListener("click", setAsCurrentProject);
     unsorted.addEventListener("click", setAsCurrentProject);
 
-    return { taskList, addProject, addTask, populateProjectDropDwn };
+    return { taskList, addProject, addTask, populateProjectDropDown };
 })();
 
 projectManager.loadProjects();
 taskManager.loadTasks();
-DOMManager.populateProjectDropDwn();
+DOMManager.populateProjectDropDown();
 Sortable.create(DOMManager.taskList, {
     animation: 150,
     ghostClass: 'blue-background-class',

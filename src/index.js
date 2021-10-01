@@ -121,6 +121,7 @@ let DOMManager = (function(){
     let tasksThisWeek = document.getElementById("tasks-this-week");
     let unsorted = document.getElementById("unsorted");
 
+    let inputWindow = document.getElementById("input-window")
     let taskFormTitle = document.getElementById("task-form-title");
     let titleInput = document.getElementById("title-input");
     let projectInput = document.getElementById("project-input");
@@ -244,6 +245,10 @@ let DOMManager = (function(){
         };
     }
 
+    function toggleInputWindow(bool) {
+        bool ? inputWindow.style.display = "" : inputWindow.style.display = "none";
+    }
+
     function addTask(task) {
         let div = document.createElement("div");
         div.id = task.id;
@@ -282,6 +287,7 @@ let DOMManager = (function(){
     }
 
     let editTask = function(e){
+        inputWindow.style.display ? toggleInputWindow(true) : toggleInputWindow(false);
         taskFormTitle.textContent = "Edit Task"
         taskManager.editingTask = true;
         let taskNode = e.target.parentNode.parentNode;
@@ -333,6 +339,7 @@ let DOMManager = (function(){
         projectManager.projects.includes(projectManager.currentProject) ? projectInput.value = projectManager.currentProject : projectInput.value = "Unsorted";
         //dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
         descInput.value = "";
+        inputWindow.style.display ? toggleInputWindow(true) : toggleInputWindow(false);
     })
     newPlaceholderBtn.addEventListener("click", () => {
         let today = new Date();
@@ -356,6 +363,7 @@ let DOMManager = (function(){
             let task = taskManager.createTask(projectManager.currentProject,titleInput.value,descInput.value,dateInput.value,false);
             addTask(task);
         }
+        inputWindow.style.display = "none";
     });
 
     return { taskList, addProject, addTask, populateProjectDropDown };

@@ -350,6 +350,7 @@ let DOMManager = (function(){
             let task = taskManager.tasks.find(t => t.id === taskManager.targetId);
             taskManager.updateTask(task, projectInput.value, titleInput.value, descInput.value, dateInput.value);
             updateTaskDiv(taskManager.targetId);
+            filterTasks(projectManager.currentProject);
             taskManager.editingTask = false;
         } else {
             let task = taskManager.createTask(projectManager.currentProject,titleInput.value,descInput.value,dateInput.value,false);

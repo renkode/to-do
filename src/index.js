@@ -11,6 +11,7 @@ class TaskManager {
     constructor() {
         this.tasks = [];
         this.editingTask = "";
+        this.targetId;
     }
 
     loadTasks(){
@@ -113,16 +114,19 @@ let DOMManager = (function(){
     let delProjBtn = document.getElementById("del-project-btn");
     let projectList = document.getElementById("project-list");
     let newTaskBtn = document.getElementById("new-task-btn");
+    let newPlaceholderBtn = document.getElementById("new-placeholder");
     let taskList = document.getElementById("task-list");
     let allTasks = document.getElementById("all-tasks");
     let tasksToday = document.getElementById("tasks-today");
     let tasksThisWeek = document.getElementById("tasks-this-week");
     let unsorted = document.getElementById("unsorted");
 
+    let taskFormTitle = document.getElementById("task-form-title");
     let titleInput = document.getElementById("title-input");
     let projectInput = document.getElementById("project-input");
     let dateInput = document.getElementById("date-input");
     let descInput = document.getElementById("desc-input");
+    let confirmBtn = document.getElementById("confirm-btn");
     dateInput.setAttribute("min",format(new Date(), "yyyy-MM-dd"));
     dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
 
@@ -264,12 +268,7 @@ let DOMManager = (function(){
         actions.innerHTML = "<button id='edit-btn'><i class='fas fa-edit'></i></button><button id='del-btn'><i class='fas fa-trash-alt'></i></button>";
 
         // edit button
-        actions.firstChild.addEventListener("click", function(e){
-            let taskNode = e.target.parentNode.parentNode;
-            let task = taskManager.tasks.find(t => t.id === taskNode.id);
-            titleInput.value = task.title;
-            projectManager.projects.includes(task.project) ? projectInput.value = task.project : projectInput.value = "Unsorted";
-        })
+        actions.firstChild.addEventListener("click", editTask)
 
         // delete button
         actions.lastChild.addEventListener("click", function(e){
@@ -280,6 +279,29 @@ let DOMManager = (function(){
 
         div.append(checkbox,title,date,actions);
         taskList.appendChild(div);
+    }
+
+    let editTask = function(e){
+        taskFormTitle.textContent = "Edit Task"
+        taskManager.editingTask = true;
+        let taskNode = e.target.parentNode.parentNode;
+        let task = taskManager.tasks.find(t => t.id === taskNode.id);
+        taskManager.targetId = task.id;
+        titleInput.value = task.title;
+        projectManager.projects.includes(task.project) ? projectInput.value = task.project : projectInput.value = "Unsorted";
+        dateInput.value = format(parseISO(task.date), "yyyy-MM-dd");
+        descInput.value = task.description;
+    }
+
+    function updateTaskDiv(id) {
+        let task = taskManager.tasks.find(t => t.id === taskManager.targetId);
+        let div = document.getElementById(id);
+        let title = div.querySelector(".task-title");
+        title.textContent = task.title;
+        let date = div.querySelector(".task-date");
+        date.textContent = format(parseISO(task.date), "MMM do");
+        //let desc = div.querySelector(".task-desc");
+        //desc.textContent = task.desc;
     }
 
     function clearTask(node) {
@@ -306,6 +328,13 @@ let DOMManager = (function(){
     });
     
     newTaskBtn.addEventListener("click", () => {
+        taskFormTitle.textContent = "New Task";
+        titleInput.value = "";
+        projectManager.projects.includes(projectManager.currentProject) ? projectInput.value = projectManager.currentProject : projectInput.value = "Unsorted";
+        //dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
+        descInput.value = "";
+    })
+    newPlaceholderBtn.addEventListener("click", () => {
         let today = new Date();
         let task = taskManager.createTask(projectManager.currentProject,`lorem ipsum ${taskManager.tasks.length}`,"This is a description",new Date().toISOString(),false);
         addTask(task);
@@ -315,6 +344,18 @@ let DOMManager = (function(){
     tasksToday.addEventListener("click", setAsCurrentProject);
     tasksThisWeek.addEventListener("click", setAsCurrentProject);
     unsorted.addEventListener("click", setAsCurrentProject);
+
+    confirmBtn.addEventListener("click", () => {
+        if (taskManager.editingTask) {
+            let task = taskManager.tasks.find(t => t.id === taskManager.targetId);
+            taskManager.updateTask(task, projectInput.value, titleInput.value, descInput.value, dateInput.value);
+            updateTaskDiv(taskManager.targetId);
+            taskManager.editingTask = false;
+        } else {
+            let task = taskManager.createTask(projectManager.currentProject,titleInput.value,descInput.value,dateInput.value,false);
+            addTask(task);
+        }
+    });
 
     return { taskList, addProject, addTask, populateProjectDropDown };
 })();

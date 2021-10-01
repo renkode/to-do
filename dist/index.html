@@ -15,7 +15,8 @@
                 <li id="unsorted" class="project">unsorted</li>
             </ul>
         </div>
-        <button id="new-task-btn">New Placeholder Task</button>
+        <button id="new-task-btn">New Task</button>
+        <button id="new-placeholder">New Placeholder Task</button>
         <button id="del-project-btn" disabled="true">Delete Project</button>
         <button id="console">console.log</button>
         <div id="task-list">
@@ -23,8 +24,8 @@
 
         <div class="edit-window">
             <!--<button id="exit-button">X</button>-->
-            <h1 class="edit-task">Edit Task (currently doesn't do anything)</h1>
-            <form id="edit-form" onsubmit="return false">
+            <h1 id="task-form-title">New Task</h1>
+            <form id="task-form" onsubmit="return false">
                 <span><b>Title:</b></span>
                 <label for="title"></label>
                 <input type="text" id="title-input" name="title" required>
@@ -37,8 +38,8 @@
                 <input type="date" id="date-input" name="date" required>
                 <span><b>Details:</b></span>
                 <label for="desc"></label>
-                <input type="text" id="desc-input" name="desc">
-                <input type="submit" id="submit-edit" value="Submit">
+                <textarea id="desc-input" name="desc" rows="4"></textarea>
+                <input type="submit" id="confirm-btn" value="Confirm">
             </form>
         </div>
         <script src="main.js"></script>

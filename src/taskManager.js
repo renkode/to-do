@@ -1,11 +1,14 @@
 import Task from './task';
-import ID from './id';
 
 export default class TaskManager {
   constructor() {
     this.tasks = [];
     this.editingTask = '';
     this.targetId = '';
+  }
+
+  generateID() {
+    return `_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   loadTasks() {
@@ -21,7 +24,7 @@ export default class TaskManager {
   }
 
   createTask(project, title, description, date) {
-    const task = new Task(project, ID(), title, description, date);
+    const task = new Task(project, this.generateID(), title, description, date);
     this.tasks.push(task);
     this.saveTasks();
     return task;

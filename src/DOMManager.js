@@ -82,10 +82,8 @@ const DOMManager = (function () {
 
   function swapTo(node) {
     // swap to a project tab
-    projectList.childNodes.forEach((proj) => {
-      if (proj.nodeName !== 'LI') return;
-      proj.classList.remove('current-project');
-    });
+    const currentProj = document.querySelector('.current-project');
+    if (currentProj) currentProj.classList.remove('current-project');
     node.classList.add('current-project');
     projectManager.currentProject = node.textContent;
     filterTasks(node.textContent);
@@ -134,19 +132,16 @@ const DOMManager = (function () {
   }
 
   function clearCurrentProjectTasks() {
-    for (const task of Array.from(taskList.childNodes)) {
-      if (task.nodeName === 'DIV' && !task.style.display) {
-        clearTask(task);
-      }
+    const tasks = Array.from(taskList.querySelectorAll('.task'));
+    for (const task of tasks) {
+      if (!task.style.display) clearTask(task);
     }
   }
 
   function clearCurrentProject() {
     clearCurrentProjectTasks();
-    for (const node of projectList.childNodes) {
-      if (node.nodeName !== 'LI') continue;
-      if (node.classList.contains('current-project')) { projectList.removeChild(node); }
-    }
+    const currentProj = document.querySelector('.current-project');
+    if (currentProj) projectList.removeChild(currentProj);
   }
 
   function toggleInputWindow(bool) {

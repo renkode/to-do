@@ -6,7 +6,7 @@
         <script src="https://kit.fontawesome.com/e09d9d3a54.js" crossorigin="anonymous"></script>
     </head>
     <body>
-        <button id="new-project-btn" class="btn btn-primary">New Project</button>
+        <button id="new-project-btn" class="btn btn-primary" data-toggle="modal" data-target="#project-modal">New Project</button>
         <div id="project-container">
             <ul id="project-list">Tasks
                 <li id="all-tasks" class="project current-project">all</li>
@@ -22,7 +22,7 @@
         <div id="task-list" class="container">
         </div>
 
-        <div id="input-window" class="modal fade" role="dialog">
+        <div id="input-window" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
 
@@ -33,10 +33,10 @@
                     
                     <div class="modal-body">
                         <div class="container-fluid">
-                            <form id="task-form">
+                            <form id="task-form" onsubmit="return false;">
                                 <div class="form-row">
                                     <div class="form-group col-12">
-                                        <label for="title">Title</label>
+                                        <label for="title">Title *</label>
                                         <input type="text" class="form-control form-control-sm" id="title-input"  name="title" required>
                                     </div>
                                     <div class="form-group col-12">
@@ -46,16 +46,16 @@
                                     </div>
                                     <div class="form-group col-12">
                                         <label for="date">Due Date</label>
-                                        <input type="date" id="date-input" class="form-control  name="date" required>
+                                        <input type="date" id="date-input" class="form-control" name="date" required>
                                     </div>
                                     <div class="form-group col-12">
                                         <label for="desc">Details</label>
-                                        <textarea id="desc-input" class="form-control" name="desc" rows="4"></textarea>
+                                        <textarea id="desc-input" class="form-control" name="desc" rows="4" placeholder="(optional)"></textarea>
                                     </div>
                                 </div>
                                 <div class="modal-footer px-0">
                                     <button type="button" class="btn btn-secondary ml-auto" data-dismiss="modal">Cancel</button>
-                                    <input type="button" id="confirm-btn" class="btn btn-primary" value="Confirm">
+                                    <button type="submit" id="confirm-btn" class="btn btn-primary" value="Confirm">Confirm</button>
                                 </div>
                             </form>
                         </div>
@@ -64,21 +64,27 @@
             </div>
         </div>
 
-        <div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal fade" id="project-modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&amp;times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-                    </div>
                     <div class="modal-body">
-                        <h3>Modal Body</h3>
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-12">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <label for="proj-name-input">Project Name</label>
+                                    <input type="text" class="form-control form-control-sm" id="proj-name-input"  name="proj-name-input" required>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" id="btnSave" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" id="proj-modal-btn" class="btn btn-primary">Add</button>
+                    </div>
                 </div>
             </div>
+        </div> 
             
 
         <script src="main.js"></script>

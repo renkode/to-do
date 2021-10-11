@@ -5,11 +5,10 @@ import { projectManager } from './projectManager.js';
 import { taskManager } from './taskManager';
 
 const DOMManager = (function () {
-  const newProjectBtn = document.getElementById('new-project-btn');
   const projName = document.getElementById('proj-name-input');
   const projModalBtn = document.getElementById('proj-modal-btn');
   const delProjBtn = document.getElementById('del-project-btn');
-  const projectList = document.getElementById('project-list');
+  const projectNav = document.getElementById('project-nav');
 
   const newTaskBtn = document.getElementById('new-task-btn');
   const newPlaceholderBtn = document.getElementById('new-placeholder');
@@ -109,10 +108,10 @@ const DOMManager = (function () {
 
   function addProject(project) {
     const proj = document.createElement('li');
-    proj.className = 'project';
+    proj.className = 'project nav-item ml-3';
     proj.textContent = project;
     proj.addEventListener('click', setAsCurrentProject);
-    projectList.appendChild(proj);
+    projectNav.appendChild(proj);
     addProjectToDropDown(proj.textContent);
     return proj;
   }
@@ -143,13 +142,7 @@ const DOMManager = (function () {
   function clearCurrentProject() {
     clearCurrentProjectTasks();
     const currentProj = document.querySelector('.current-project');
-    if (currentProj) projectList.removeChild(currentProj);
-  }
-
-  function toggleInputWindow(bool) {
-    bool
-      ? (inputWindow.style.display = '')
-      : (inputWindow.style.display = 'none');
+    if (currentProj) projectNav.removeChild(currentProj);
   }
 
   function clearTask(node) {
@@ -262,7 +255,7 @@ const DOMManager = (function () {
       clearCurrentProject();
       projectManager.deleteCurrentProject();
     }
-    swapTo(projectList.childNodes[1]);
+    swapTo(allTasks);
     populateProjectDropDown();
   });
 
@@ -275,6 +268,7 @@ const DOMManager = (function () {
     dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
     descInput.value = '';
   });
+
   newPlaceholderBtn.addEventListener('click', () => {
     const today = new Date();
     const task = taskManager.createTask(
@@ -308,7 +302,7 @@ const DOMManager = (function () {
       taskManager.editingTask = false;
     } else {
       const task = taskManager.createTask(
-        projectManager.currentProject,
+        projectInput.value,
         titleInput.value,
         descInput.value,
         dateInput.value,

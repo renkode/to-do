@@ -2,18 +2,26 @@ html {
     font-family: sans-serif;
 }
 
+body {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+#task-container {
+    width: 80%;
+}
+
 .project {
     cursor: pointer;
     text-transform: capitalize;
+    
 }
 
 .current-project {
     font-weight: bold;
 }
 
-#del-project-btn:disabled {
-    background-color: transparent;
-}
 
 #edit-btn {
     width: 30px;
@@ -84,6 +92,55 @@ i {
     transition: opacity 0.1s linear;
   }
 
-.datepicker {
-z-index: 1600 !important; /* has to be larger than 1050 */
+.nav-span {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    color: black;
+    background-color: transparent;
+}
+
+#new-project-btn {
+    height: 1.5rem;
+    width: 1.5rem;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 0.5rem;
+    padding: 0;
+    margin: 0 auto;
+    flex-shrink: 0;
+}
+
+.navbar {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.sidebar {
+    max-width: inherit;
+    width: 100%;
+}
+
+.nav-item {
+    font-size: 1.2rem;
+}
+
+#project-list {
+    max-width: inherit;
+    width: 100%;
+}
+
+ul {
+    /*list-style-type: none;*/
+}
+
+li {
+    word-wrap: break-word;
 }

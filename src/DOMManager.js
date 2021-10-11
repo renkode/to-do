@@ -33,8 +33,7 @@ const DOMManager = (function () {
 
   function filterTasks(type) {
     // display tasks depending on current tab
-    const taskNodes = Array.from(taskList.childNodes);
-    taskNodes.shift(); // remove empty node
+    const taskNodes = Array.from(taskList.querySelectorAll('.task'));
     switch (true) {
       case projectManager.projects.includes(type):
         for (let i = 0; i < taskManager.tasks.length; i++) {
@@ -160,7 +159,7 @@ const DOMManager = (function () {
       : toggleInputWindow(false);
     taskFormTitle.textContent = 'Edit Task';
     taskManager.editingTask = true;
-    const taskNode = e.target.parentNode.parentNode;
+    const taskNode = e.target.closest(".task");
     const task = taskManager.tasks.find((t) => t.id === taskNode.id);
     taskManager.targetId = task.id;
     titleInput.value = task.title;
@@ -174,9 +173,16 @@ const DOMManager = (function () {
   function addTask(task) {
     const div = document.createElement('div');
     div.id = task.id;
-    div.className = 'task';
+    div.className = 'row task mt-2';
     div.style.display = '';
 
+    const colOne = document.createElement('div');
+    colOne.className = 'col-1';
+    const colTwo = document.createElement('div');
+    colTwo.className = 'col-7';
+    const colThree = document.createElement('div');
+    colThree.className = 'col-4';
+    
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = false;
@@ -195,16 +201,20 @@ const DOMManager = (function () {
     actions.innerHTML = "<button id='edit-btn'><i class='fas fa-edit'></i></button><button id='del-btn'><i class='fas fa-trash-alt'></i></button>";
 
     // edit button
-    actions.firstChild.addEventListener('click', editTask);
+    actions.querySelector('#edit-btn').addEventListener('click', editTask);
 
     // delete button
-    actions.lastChild.addEventListener('click', (e) => {
-      const taskNode = e.target.parentNode.parentNode;
+    actions.querySelector('#del-btn').addEventListener('click', (e) => {
+      const taskNode = e.target.closest(".task");
       taskManager.deleteTask(taskNode.id);
       clearTask(taskNode);
     });
 
-    div.append(checkbox, title, date, actions);
+    colOne.appendChild(checkbox);
+    colTwo.appendChild(title);
+    colThree.append(date, actions);
+    div.append(colOne, colTwo, colThree);
+    //div.append(checkbox, title, date, actions);
     taskList.appendChild(div);
   }
 
@@ -212,7 +222,7 @@ const DOMManager = (function () {
     const tasks = JSON.parse(window.localStorage.getItem('tasks'));
     if (!tasks) return;
     for (const task of tasks) {
-      DOMManager.addTask(task);
+      addTask(task);
     }
   }
 
@@ -226,6 +236,16 @@ const DOMManager = (function () {
     // let desc = div.querySelector(".task-desc");
     // desc.textContent = task.desc;
   }
+
+  function loadAll(){
+    addExistingProjects();
+    addExistingTasks();
+    populateProjectDropDown();
+  }
+
+  //=====================================================
+  // Event Listeners
+  //=====================================================
 
   newProjectBtn.addEventListener('click', () => {
     const project = prompt('Project name');
@@ -254,9 +274,6 @@ const DOMManager = (function () {
       : (projectInput.value = 'Unsorted');
     // dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
     descInput.value = '';
-    inputWindow.style.display
-      ? toggleInputWindow(true)
-      : toggleInputWindow(false);
   });
   newPlaceholderBtn.addEventListener('click', () => {
     const today = new Date();
@@ -298,16 +315,12 @@ const DOMManager = (function () {
       );
       addTask(task);
     }
-    inputWindow.style.display = 'none';
+    $('#input-window').modal('hide')
   });
 
   return {
     taskList,
-    addProject,
-    addTask,
-    addExistingProjects,
-    addExistingTasks,
-    populateProjectDropDown,
+    loadAll,
   };
 }());
 export default DOMManager;

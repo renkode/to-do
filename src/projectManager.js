@@ -1,4 +1,4 @@
-export default class ProjectManager {
+class ProjectManager {
   constructor() {
     this.projects = [];
     this.currentProject = '';

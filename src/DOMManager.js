@@ -6,8 +6,11 @@ import { taskManager } from './taskManager';
 
 const DOMManager = (function () {
   const newProjectBtn = document.getElementById('new-project-btn');
+  const projName = document.getElementById('proj-name-input');
+  const projModalBtn = document.getElementById('proj-modal-btn');
   const delProjBtn = document.getElementById('del-project-btn');
   const projectList = document.getElementById('project-list');
+
   const newTaskBtn = document.getElementById('new-task-btn');
   const newPlaceholderBtn = document.getElementById('new-placeholder');
   const taskList = document.getElementById('task-list');
@@ -154,9 +157,6 @@ const DOMManager = (function () {
   }
 
   const editTask = function (e) {
-    inputWindow.style.display
-      ? toggleInputWindow(true)
-      : toggleInputWindow(false);
     taskFormTitle.textContent = 'Edit Task';
     taskManager.editingTask = true;
     const taskNode = e.target.closest(".task");
@@ -198,7 +198,7 @@ const DOMManager = (function () {
 
     const actions = document.createElement('span');
     actions.className = 'actions';
-    actions.innerHTML = "<button id='edit-btn'><i class='fas fa-edit'></i></button><button id='del-btn'><i class='fas fa-trash-alt'></i></button>";
+    actions.innerHTML = "<button id='edit-btn' data-toggle='modal' data-target='#input-window'><i class='fas fa-edit'></i></button><button id='del-btn'><i class='fas fa-trash-alt'></i></button>";
 
     // edit button
     actions.querySelector('#edit-btn').addEventListener('click', editTask);
@@ -247,8 +247,8 @@ const DOMManager = (function () {
   // Event Listeners
   //=====================================================
 
-  newProjectBtn.addEventListener('click', () => {
-    const project = prompt('Project name');
+  projModalBtn.addEventListener('click', () => {
+    const project = projName.value;
     if (!project) return;
     projectManager.createProject(project);
     const node = addProject(project);
@@ -272,7 +272,7 @@ const DOMManager = (function () {
     projectManager.projects.includes(projectManager.currentProject)
       ? (projectInput.value = projectManager.currentProject)
       : (projectInput.value = 'Unsorted');
-    // dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
+    dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
     descInput.value = '';
   });
   newPlaceholderBtn.addEventListener('click', () => {
@@ -293,6 +293,7 @@ const DOMManager = (function () {
   unsorted.addEventListener('click', setAsCurrentProject);
 
   confirmBtn.addEventListener('click', () => {
+    if (!titleInput.value) return;
     if (taskManager.editingTask) {
       const task = taskManager.tasks.find((t) => t.id === taskManager.targetId);
       taskManager.updateTask(

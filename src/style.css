@@ -4,7 +4,7 @@ html {
 
 body {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     height: 100vh;
 }
 
@@ -92,11 +92,27 @@ i {
     transition: opacity 0.1s linear;
   }
 
+.body-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
 .nav-span {
     width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+}
+
+.header-span {
+    position: relative;
+    color: white;
+    padding: 0.5rem 1rem;
+    background-color: rgb(58, 58, 58);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.562);
 }
 
 .dropdown-item.active, .dropdown-item:active {
@@ -116,16 +132,24 @@ i {
 }
 
 .navbar {
-    width: 300px;
+    color: white;
+    background-image: linear-gradient(rgb(46, 46, 46) 65%, teal);
+    min-width: 200px;
+    max-width: 380px;
+    width: 30vw;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    padding: 1rem !important;
+    flex: 1;
+    z-index: -1;
 }
 
 .sidebar {
     max-width: inherit;
     width: 100%;
+    height: 100%;
 }
 
 .nav-item {
@@ -143,4 +167,29 @@ ul {
 
 li {
     word-wrap: break-word;
+}
+
+.project:hover {
+    padding-left: 3%;
+    transition: ease-out 0.2s;
+}
+
+.project:not(hover) {
+    padding-left: 0%;
+    transition: ease-out 0.2s;
+}
+
+h3 {
+    margin: 0;
+    align-self: center;
+}
+
+#to-do::after{
+    width: 4px;
+    height: 80%;
+    background-color: gray;
+}
+
+.btn-primary {
+
 }

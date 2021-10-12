@@ -6,41 +6,50 @@
         <script src="https://kit.fontawesome.com/e09d9d3a54.js" crossorigin="anonymous"></script>
     </head>
     <body>
-        <nav class="navbar navbar-light bg-light">
-            <span class="nav-span"> 
-                <h2>To-Do</h2>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-            </span>
+        <span class="header-span container-fluid"> 
+            <div class="row">
+                <div class="col-3">
+                    <h3 id="to-do">To-Do</h3>
+                </div>
+                <div class="col">
+                    <button id="new-task-btn" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#input-window">New Task</button>
+                    <button id="new-placeholder" class="btn btn-sm btn-primary">New Placeholder Task</button>
+                    <button id="del-project-btn" disabled="true" class="btn btn-sm btn-primary">Delete Project</button>
+                    <button id="console" class="btn btn-sm btn-primary">console.log</button>
+                </div>
+            </div>
            
-          
-            <div class="sidebar">
-              <ul class="navbar-nav mr-auto">
-                <li id="all-tasks" class="nav-item project current-project active">all</li>
-                <li id="tasks-today" class="nav-item project">today</li>
-                <li id="tasks-this-week" class="nav-item project">this week</li>
-                <li id="unsorted" class="nav-item project">unsorted</li>
-                
-                <span class="nav-span">
-                    <li id="project-list" class="nav-item">Projects</li>
-                    <button id="new-project-btn" class="btn btn-outline-primary" data-toggle="modal" data-target="#project-modal">+</button>
-                </span>
-                <ul id="project-nav" class="pl-0">
-                </ul>
-              </ul>
-            </div>
-        </nav>
+        </span>
 
-        <div id="task-container">
-            <button id="new-task-btn" class="btn btn-primary" data-toggle="modal" data-target="#input-window">New Task</button>
-            <button id="new-placeholder" class="btn btn-primary">New Placeholder Task</button>
-            <button id="del-project-btn" disabled="true" class="btn btn-primary">Delete Project</button>
-            <button id="console" class="btn btn-primary">console.log</button>
-            
-            <div id="task-list" class="container">
+        <div class="body-wrapper">
+
+            <nav class="navbar navbar-light bg-light px-5">
+                <div class="sidebar">
+                  <ul class="navbar-nav mr-auto">
+                    <li id="all-tasks" class="nav-item project current-project active">all</li>
+                    <li id="tasks-today" class="nav-item project">today</li>
+                    <li id="tasks-this-week" class="nav-item project">this week</li>
+                    <li id="unsorted" class="nav-item project">unsorted</li>
+                    
+                    <span class="nav-span">
+                        <li id="project-list" class="nav-item">Projects</li>
+                        <button id="new-project-btn" class="btn btn-outline-primary" data-toggle="modal" data-target="#project-modal">+</button>
+                    </span>
+                    <ul id="project-nav" class="pl-0">
+                    </ul>
+                  </ul>
+                </div>
+            </nav>
+
+            <div id="task-container">
+                <div id="task-list" class="container">
+                </div>
             </div>
+
         </div>
+       
+
+
        
 
         <div id="input-window" class="modal fade" tabindex="-1" role="dialog">
@@ -58,7 +67,7 @@
                                 <div class="form-row">
                                     <div class="form-group col-12">
                                         <label for="title">Title *</label>
-                                        <input type="text" class="form-control form-control-sm" id="title-input"  name="title" required>
+                                        <input type="text" class="form-control form-control-sm" id="title-input"  name="title" maxlength="30" required>
                                     </div>
                                     <div class="form-group col-12">
                                         <label for="project">Project</label>
@@ -94,7 +103,7 @@
                                 <div class="form-group col-12">
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                     <label for="proj-name-input">Project Name</label>
-                                    <input type="text" class="form-control form-control-sm" id="proj-name-input"  name="proj-name-input" required>
+                                    <input type="text" class="form-control form-control-sm" id="proj-name-input"  name="proj-name-input"  maxlength="25" required>
                                 </div>
                             </div>
                         </form>

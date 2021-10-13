@@ -284,6 +284,7 @@ const DOMManager = (function () {
     projectManager.createProject(project);
     const node = addProject(project);
     swapTo(node);
+    $('#project-modal').modal('hide');
   });
 
   delProjBtn.addEventListener('click', () => {

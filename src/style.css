@@ -4,6 +4,7 @@ body {
     flex-direction: column;
     height: 100vh;
     background-color: rgb(27, 27, 27);
+    overflow: hidden;
 }
 
 .body-wrapper {
@@ -25,7 +26,6 @@ body {
     position: relative;
     display: flex;
     flex-direction: row;
-    position: relative;
     color: white;
     padding: 0.5rem 1rem;
     background-color: rgb(58, 58, 58);
@@ -146,11 +146,13 @@ h3 {
 #task-container {
     margin: 1rem;
     width: 80%;
+    overflow: scroll;
 }
 
 #task-list {
     max-width: 800px;
     margin-left: 0;
+    margin-bottom: 3rem;
 }
 
 .task {

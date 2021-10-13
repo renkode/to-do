@@ -9,6 +9,7 @@ const DOMManager = (function () {
   const projModalBtn = document.getElementById('proj-modal-btn');
   const delProjBtn = document.getElementById('del-project-btn');
   const projectNav = document.getElementById('project-nav');
+  const projectErr = document.getElementById('project-error');
 
   const newTaskBtn = document.getElementById('new-task-btn');
   const newPlaceholderBtn = document.getElementById('new-placeholder');
@@ -278,9 +279,15 @@ const DOMManager = (function () {
   // Event Listeners
   //=====================================================
 
+  projName.addEventListener('keyup', () => {
+    projectManager.projects.includes(projName.value.toLowerCase())
+      ? projectErr.style.visibility = "visible"
+      : projectErr.style.visibility = "hidden";
+  });
+  
   projModalBtn.addEventListener('click', () => {
     const project = projName.value;
-    if (!project) return;
+    if (!project || projectManager.projects.includes(project.toLowerCase())) return;
     projectManager.createProject(project);
     const node = addProject(project);
     swapTo(node);

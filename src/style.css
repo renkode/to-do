@@ -64,13 +64,13 @@ body {
 
 
 .sidebar {
-    min-width: 200px;
+    min-width: 150px;
     max-width: 380px;
     width: 30vw;
 }
 
 #to-do {
-    min-width: calc(200px + 1rem);
+    min-width: calc(150px + 1rem);
     max-width: calc(380px + 1rem);
     width: calc(30vw + 1rem);
     border-right: 2px solid gray;
@@ -125,6 +125,10 @@ li {
 .current-project {
     font-weight: bold;
     color: #10eacf;
+}
+
+#project-error {
+    color: red;
 }
 
 h3 {

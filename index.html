@@ -96,16 +96,14 @@
         <div class="modal fade" id="project-modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-body">
+                    <div class="modal-body pb-0">
                         <form class="needs-validation">
                             <div class="form-row">
                                 <div class="form-group col-12">
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                     <label for="proj-name-input">Project Name</label>
                                     <input type="text" class="form-control form-control-sm" id="proj-name-input"  name="proj-name-input"  maxlength="25" required>
-                                    <div class="valid-feedback">
-                                        There's an existing project with that name.  
-                                    </div>
+                                    <p id="project-error" class="my-0">Project already exists.</p>
                                 </div>
                             </div>
                         </form>

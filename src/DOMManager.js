@@ -215,17 +215,17 @@ const DOMManager = (function () {
 
     const actions = document.createElement('span');
     actions.className = 'actions';
-    actions.innerHTML = "<button class='chevron' data-toggle='collapse' data-target=''><i class='fas fa-chevron-down'></i><button class='edit-btn' data-toggle='modal' data-target='#input-window'><i class='fas fa-edit'></i></button><button class='del-btn'><i class='fas fa-trash-alt'></i></button>";
+    actions.innerHTML = "<button class='chevron collapsed' data-toggle='collapse' data-target=''><i class='fas fa-chevron-down'></i><button class='edit-btn' data-toggle='modal' data-target='#input-window'><i class='fas fa-edit'></i></button><button class='del-btn'><i class='fas fa-trash-alt'></i></button>";
 
     const chevron = actions.querySelector('.chevron');
     chevron.dataset.target = `#${desc.id}`;
     chevron.addEventListener('click', (e) => {
       if (chevron.classList.contains('collapsed')) {
-        e.target.classList.add('rotate-down');
-        e.target.classList.remove('rotate-up');
-      } else {
         e.target.classList.add('rotate-up');
         e.target.classList.remove('rotate-down');
+      } else {
+        e.target.classList.add('rotate-down');
+        e.target.classList.remove('rotate-up');
       }
     })
 

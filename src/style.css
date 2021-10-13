@@ -146,7 +146,7 @@ h3 {
 #task-container {
     margin: 1rem;
     width: 80%;
-    overflow: scroll;
+    overflow: auto;
 }
 
 #task-list {

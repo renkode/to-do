@@ -5,6 +5,5 @@ export default class Task {
     this.title = title;
     this.description = description;
     this.date = date;
-    this.checked = checked;
   }
 }

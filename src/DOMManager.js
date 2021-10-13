@@ -169,7 +169,6 @@ const DOMManager = (function () {
     div.className = 'row task mt-2 slidein';
     div.style.display = '';
     div.addEventListener('animationend', function(e){
-      console.log(e.animationName);
       if(e.animationName === 'slidein') div.classList.remove("slidein");
       if(e.animationName === 'slideout') {
         taskManager.deleteTask(this);
@@ -183,11 +182,20 @@ const DOMManager = (function () {
     colTwo.className = 'col-7';
     const colThree = document.createElement('div');
     colThree.className = 'date-and-actions col-4';
+    const colFour = document.createElement('div');
+    colFour.className = 'description col-11 offset-1';
     
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = false;
     checkbox.className = 'checkbox';
+    checkbox.addEventListener("click", function(e){
+      const taskNode = e.target.closest(".task");
+      const title = taskNode.querySelector(".task-title");
+      e.target.checked
+        ? (title.style.textDecoration = "line-through")
+        : (title.style.textDecoration = "none");
+    });
 
     const title = document.createElement('span');
     title.className = 'task-title';
@@ -197,26 +205,47 @@ const DOMManager = (function () {
     date.className = 'task-date';
     date.textContent = format(parseISO(task.date), 'MMM do');
 
+    const desc = document.createElement('div');
+    desc.className = 'collapse';
+    desc.id = `desc${task.id}`
+    const card = document.createElement('div');
+    card.className = 'card card-body task-desc'
+    card.textContent = task.description;
+    desc.appendChild(card);
+
     const actions = document.createElement('span');
     actions.className = 'actions';
-    actions.innerHTML = "<button id='edit-btn' data-toggle='modal' data-target='#input-window'><i class='fas fa-edit'></i></button><button id='del-btn'><i class='fas fa-trash-alt'></i></button>";
+    actions.innerHTML = "<button class='chevron' data-toggle='collapse' data-target=''><i class='fas fa-chevron-down'></i><button class='edit-btn' data-toggle='modal' data-target='#input-window'><i class='fas fa-edit'></i></button><button class='del-btn'><i class='fas fa-trash-alt'></i></button>";
+
+    const chevron = actions.querySelector('.chevron');
+    chevron.dataset.target = `#${desc.id}`;
+    chevron.addEventListener('click', (e) => {
+      if (chevron.classList.contains('collapsed')) {
+        e.target.classList.add('rotate-down');
+        e.target.classList.remove('rotate-up');
+      } else {
+        e.target.classList.add('rotate-up');
+        e.target.classList.remove('rotate-down');
+      }
+    })
+
 
     // edit button
-    actions.querySelector('#edit-btn').addEventListener('click', editTask);
+    actions.querySelector('.edit-btn').addEventListener('click', editTask);
 
     // delete button
-    actions.querySelector('#del-btn').addEventListener('click', (e) => {
-      const taskNode = e.target.closest(".task");
+    actions.querySelector('.del-btn').addEventListener('click', (e) => {
+      const taskNode = e.target.closest('.task');
       //taskManager.deleteTask(taskNode.id);
       //clearTask(taskNode);
-      taskNode.classList.add("slideout");
+      taskNode.classList.add('slideout');
     });
 
     colOne.appendChild(checkbox);
     colTwo.appendChild(title);
     colThree.append(date, actions);
-    div.append(colOne, colTwo, colThree);
-    //div.append(checkbox, title, date, actions);
+    colFour.appendChild(desc);
+    div.append(colOne, colTwo, colThree, colFour);
     taskList.appendChild(div);
   }
 
@@ -235,8 +264,8 @@ const DOMManager = (function () {
     title.textContent = task.title;
     const date = div.querySelector('.task-date');
     date.textContent = format(parseISO(task.date), 'MMM do');
-    // let desc = div.querySelector(".task-desc");
-    // desc.textContent = task.desc;
+    let desc = div.querySelector(".task-desc");
+    desc.textContent = task.description;
   }
 
   function loadAll(){

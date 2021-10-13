@@ -129,6 +129,7 @@ li {
 
 #project-error {
     color: red;
+    visibility: hidden;
 }
 
 h3 {

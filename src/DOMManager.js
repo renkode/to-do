@@ -6,6 +6,7 @@ import { taskManager } from './taskManager';
 
 const DOMManager = (function () {
   const projName = document.getElementById('proj-name-input');
+  const newProjBtn = document.getElementById('new-project-btn');
   const projModalBtn = document.getElementById('proj-modal-btn');
   const delProjBtn = document.getElementById('del-project-btn');
   const projectNav = document.getElementById('project-nav');
@@ -153,7 +154,7 @@ const DOMManager = (function () {
   const editTask = function (e) {
     taskFormTitle.textContent = 'Edit Task';
     taskManager.editingTask = true;
-    const taskNode = e.target.closest(".task");
+    const taskNode = e.target.closest('.task');
     const task = taskManager.tasks.find((t) => t.id === taskNode.id);
     taskManager.targetId = task.id;
     titleInput.value = task.title;
@@ -170,7 +171,7 @@ const DOMManager = (function () {
     div.className = 'row task mt-2 slidein';
     div.style.display = '';
     div.addEventListener('animationend', function(e){
-      if(e.animationName === 'slidein') div.classList.remove("slidein");
+      if(e.animationName === 'slidein') div.classList.remove('slidein');
       if(e.animationName === 'slideout') {
         taskManager.deleteTask(this);
         clearTask(this);
@@ -190,12 +191,12 @@ const DOMManager = (function () {
     checkbox.type = 'checkbox';
     checkbox.value = false;
     checkbox.className = 'checkbox';
-    checkbox.addEventListener("click", function(e){
-      const taskNode = e.target.closest(".task");
-      const title = taskNode.querySelector(".task-title");
+    checkbox.addEventListener('click', function(e){
+      const taskNode = e.target.closest('.task');
+      const title = taskNode.querySelector('.task-title');
       e.target.checked
-        ? (title.style.textDecoration = "line-through")
-        : (title.style.textDecoration = "none");
+        ? (title.style.textDecoration = 'line-through')
+        : (title.style.textDecoration = 'none');
     });
 
     const title = document.createElement('span');
@@ -265,7 +266,7 @@ const DOMManager = (function () {
     title.textContent = task.title;
     const date = div.querySelector('.task-date');
     date.textContent = format(parseISO(task.date), 'MMM do');
-    let desc = div.querySelector(".task-desc");
+    let desc = div.querySelector('.task-desc');
     desc.textContent = task.description;
   }
 
@@ -279,10 +280,14 @@ const DOMManager = (function () {
   // Event Listeners
   //=====================================================
 
+  newProjBtn.addEventListener('click', () => {
+    projectInput.value = '';
+  })
+  
   projName.addEventListener('keyup', () => {
     projectManager.projects.includes(projName.value.toLowerCase())
-      ? projectErr.style.visibility = "visible"
-      : projectErr.style.visibility = "hidden";
+      ? projectErr.style.visibility = 'visible'
+      : projectErr.style.visibility = 'hidden';
   });
   
   projModalBtn.addEventListener('click', () => {
@@ -311,7 +316,7 @@ const DOMManager = (function () {
     projectManager.projects.includes(projectManager.currentProject)
       ? (projectInput.value = projectManager.currentProject)
       : (projectInput.value = 'Unsorted');
-    dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
+    dateInput.setAttribute('value',format(new Date(), 'yyyy-MM-dd'));
     descInput.value = '';
   });
 

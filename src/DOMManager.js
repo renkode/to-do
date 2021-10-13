@@ -166,15 +166,23 @@ const DOMManager = (function () {
   function addTask(task) {
     const div = document.createElement('div');
     div.id = task.id;
-    div.className = 'row task mt-2';
+    div.className = 'row task mt-2 slidein';
     div.style.display = '';
+    div.addEventListener('animationend', function(e){
+      console.log(e.animationName);
+      if(e.animationName === 'slidein') div.classList.remove("slidein");
+      if(e.animationName === 'slideout') {
+        taskManager.deleteTask(this);
+        clearTask(this);
+      } 
+    });
 
     const colOne = document.createElement('div');
     colOne.className = 'col-1';
     const colTwo = document.createElement('div');
     colTwo.className = 'col-7';
     const colThree = document.createElement('div');
-    colThree.className = 'col-4';
+    colThree.className = 'date-and-actions col-4';
     
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -199,8 +207,9 @@ const DOMManager = (function () {
     // delete button
     actions.querySelector('#del-btn').addEventListener('click', (e) => {
       const taskNode = e.target.closest(".task");
-      taskManager.deleteTask(taskNode.id);
-      clearTask(taskNode);
+      //taskManager.deleteTask(taskNode.id);
+      //clearTask(taskNode);
+      taskNode.classList.add("slideout");
     });
 
     colOne.appendChild(checkbox);

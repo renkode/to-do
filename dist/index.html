@@ -6,24 +6,20 @@
         <script src="https://kit.fontawesome.com/e09d9d3a54.js" crossorigin="anonymous"></script>
     </head>
     <body>
-        <span class="header-span container-fluid"> 
-            <div class="row">
-                <div class="col-3">
-                    <h3 id="to-do">To-Do</h3>
-                </div>
-                <div class="col">
-                    <button id="new-task-btn" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#input-window">New Task</button>
-                    <button id="new-placeholder" class="btn btn-sm btn-primary">New Placeholder Task</button>
-                    <button id="del-project-btn" disabled="true" class="btn btn-sm btn-primary">Delete Project</button>
-                    <button id="console" class="btn btn-sm btn-primary">console.log</button>
-                </div>
-            </div>
-           
+        <span class="header-span"> 
+                <h3 id="to-do">To-Do</h3>
+                <span class="btn-span">
+                    <button id="new-task-btn" class="nav-btn btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#input-window">New Task</button>
+                    <button id="new-placeholder" class="d-none d-sm-inline nav-btn btn btn-sm btn-outline-primary">New Placeholder Task</button>
+                    <button id="del-project-btn" disabled="true" class="nav-btn btn btn-sm btn-outline-primary">Delete Project</button>
+                    <button id="console" class="d-none d-sm-inline nav-btn btn btn-sm btn-outline-primary">console.log</button>
+                </span>
+                
         </span>
 
         <div class="body-wrapper">
 
-            <nav class="navbar navbar-light bg-light px-5">
+            <nav class="navbar">
                 <div class="sidebar">
                   <ul class="navbar-nav mr-auto">
                     <li id="all-tasks" class="nav-item project current-project active">all</li>
@@ -67,7 +63,7 @@
                                 <div class="form-row">
                                     <div class="form-group col-12">
                                         <label for="title">Title *</label>
-                                        <input type="text" class="form-control form-control-sm" id="title-input"  name="title" maxlength="30" required>
+                                        <input type="text" class="form-control form-control-sm" id="title-input"  name="title" maxlength="40" required>
                                     </div>
                                     <div class="form-group col-12">
                                         <label for="project">Project</label>

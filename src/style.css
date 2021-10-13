@@ -6,91 +6,8 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    background-color: rgb(27, 27, 27);
 }
-
-#task-container {
-    width: 80%;
-}
-
-.project {
-    cursor: pointer;
-    text-transform: capitalize;
-    
-}
-
-.current-project {
-    font-weight: bold;
-}
-
-
-#edit-btn {
-    width: 30px;
-    height: 30px;
-    background-color: rgb(64, 140, 255);
-    font-weight: bold;
-    border: 0px;
-    cursor: pointer;
-    border-radius: 4px;
-    color: white;
-}
-
-#edit-btn:hover {
-    background-color: rgb(13, 99, 212);
-    transition: background-color .15s;
-}
-
-#del-btn {
-    width: 30px;
-    height: 30px;
-    background-color: rgba(255, 64, 80);
-    font-weight: bold;
-    border: 0px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-#del-btn:hover {
-    background-color: rgb(212, 13, 29);
-    transition: background-color .15s;
-}
-
-.fa-pen-to-square, .fa-trash-alt {
-    color: white;
-    pointer-events: none;
-    font-size: 18px;
-}
-
-.task {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    border: 1px solid black;
-
-}
-
-.checkbox, #edit-btn, #del-btn {
-    margin: 0.5em;
-}
-
-.task-date {
-    margin-left:auto;
-}
-
-.actions {
-    margin-left:auto;
-}
-
-select, select option, option {
-    text-transform: capitalize;
-}
-
-i {
-    pointer-events: none;
-} 
-
-.fade {
-    transition: opacity 0.1s linear;
-  }
 
 .body-wrapper {
     display: flex;
@@ -109,10 +26,14 @@ i {
 
 .header-span {
     position: relative;
+    display: flex;
+    flex-direction: row;
+    position: relative;
     color: white;
     padding: 0.5rem 1rem;
     background-color: rgb(58, 58, 58);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.562);
+    z-index: 2;
 }
 
 .dropdown-item.active, .dropdown-item:active {
@@ -132,23 +53,43 @@ i {
 }
 
 .navbar {
+    height: 100%;
     color: white;
     background-image: linear-gradient(rgb(46, 46, 46) 65%, teal);
-    min-width: 200px;
-    max-width: 380px;
-    width: 30vw;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     padding: 1rem !important;
     flex: 1;
-    z-index: -1;
+    box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.596);
+}
+
+
+.sidebar {
+    min-width: 200px;
+    max-width: 380px;
+    width: 30vw;
+}
+
+#to-do {
+    min-width: calc(200px + 1rem);
+    max-width: calc(380px + 1rem);
+    width: calc(30vw + 1rem);
+    border-right: 2px solid gray;
+    box-sizing: border-box;
+}
+
+.sidebar, #to-do {
+    padding-left: 5vw;
+}
+
+.btn-span {
+    flex: 1;
+    margin-left: 1rem;
 }
 
 .sidebar {
-    max-width: inherit;
-    width: 100%;
     height: 100%;
 }
 
@@ -169,6 +110,11 @@ li {
     word-wrap: break-word;
 }
 
+.project {
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
 .project:hover {
     padding-left: 3%;
     transition: ease-out 0.2s;
@@ -179,17 +125,149 @@ li {
     transition: ease-out 0.2s;
 }
 
+.current-project {
+    font-weight: bold;
+    color: #10eacf;
+}
+
 h3 {
     margin: 0;
     align-self: center;
 }
 
-#to-do::after{
-    width: 4px;
-    height: 80%;
-    background-color: gray;
+.nav-btn {
+    margin: 0.2rem 0.5rem;
 }
 
-.btn-primary {
 
+
+#task-container {
+    margin: 1%;
+    width: 80%;
 }
+
+#task-list {
+    max-width: 800px;
+    margin-left: 0;
+}
+
+.task {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: white;
+    background-color: rgb(73, 73, 73);
+    border-radius: 8px;
+}
+
+.slidein {
+    animation: slidein 0.5s ease;
+}
+
+.slideout {
+    animation: slideout 0.5s ease;
+}
+
+@keyframes slidein {
+    from {
+        opacity: 0%;
+        transform: translateX(-5%);
+    }
+  
+    to {
+        opacity: 100%;
+        transform: translateX(0%);
+    }
+}
+
+@keyframes slideout {
+    from {
+        opacity: 100%;
+        transform: translateX(0%);
+    }
+  
+    to {
+        opacity: 0%;
+        transform: translateX(-5%);
+    }
+}
+
+.checkbox, #edit-btn, #del-btn {
+    margin: 0.25em;
+}
+
+.task-title {
+    word-wrap: break-word;
+}
+
+.task-date {
+    margin-left:auto;
+}
+
+.actions {
+    margin-left:auto;
+}
+
+.date-and-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+select, select option, option {
+    text-transform: capitalize;
+}
+
+i {
+    pointer-events: none;
+} 
+
+#edit-btn {
+    font-size: 1rem;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    font-weight: bold;
+    border: 0px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: rgb(58, 58, 58);
+    text-align: center;
+    padding-right: 0px;
+}
+
+#edit-btn .fa-edit {
+    color: #10eacf;
+}
+
+#edit-btn:hover .fa-edit {
+    color: #0cbaa4;
+    transition: color .15s;
+}
+
+#del-btn {
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    font-weight: bold;
+    border: 0px;
+    cursor: pointer;
+    border-radius: 4px;
+    vertical-align: center;
+    padding: 0;
+}
+
+#del-btn .fa-trash-alt {
+    color: rgba(255, 64, 80);
+}
+
+#del-btn:hover .fa-trash-alt {
+    color: rgb(212, 13, 29);
+    transition: color .15s;
+}
+
+.fade {
+    transition: opacity 0.1s linear;
+}
+

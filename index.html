@@ -97,12 +97,15 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <form>
+                        <form class="needs-validation">
                             <div class="form-row">
                                 <div class="form-group col-12">
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                     <label for="proj-name-input">Project Name</label>
                                     <input type="text" class="form-control form-control-sm" id="proj-name-input"  name="proj-name-input"  maxlength="25" required>
+                                    <div class="valid-feedback">
+                                        There's an existing project with that name.  
+                                    </div>
                                 </div>
                             </div>
                         </form>

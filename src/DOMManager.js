@@ -5,9 +5,11 @@ import { projectManager } from './projectManager.js';
 import { taskManager } from './taskManager';
 
 const DOMManager = (function () {
-  const newProjectBtn = document.getElementById('new-project-btn');
+  const projName = document.getElementById('proj-name-input');
+  const projModalBtn = document.getElementById('proj-modal-btn');
   const delProjBtn = document.getElementById('del-project-btn');
-  const projectList = document.getElementById('project-list');
+  const projectNav = document.getElementById('project-nav');
+
   const newTaskBtn = document.getElementById('new-task-btn');
   const newPlaceholderBtn = document.getElementById('new-placeholder');
   const taskList = document.getElementById('task-list');
@@ -33,8 +35,7 @@ const DOMManager = (function () {
 
   function filterTasks(type) {
     // display tasks depending on current tab
-    const taskNodes = Array.from(taskList.childNodes);
-    taskNodes.shift(); // remove empty node
+    const taskNodes = Array.from(taskList.querySelectorAll('.task'));
     switch (true) {
       case projectManager.projects.includes(type):
         for (let i = 0; i < taskManager.tasks.length; i++) {
@@ -107,10 +108,10 @@ const DOMManager = (function () {
 
   function addProject(project) {
     const proj = document.createElement('li');
-    proj.className = 'project';
+    proj.className = 'project nav-item ml-3';
     proj.textContent = project;
     proj.addEventListener('click', setAsCurrentProject);
-    projectList.appendChild(proj);
+    projectNav.appendChild(proj);
     addProjectToDropDown(proj.textContent);
     return proj;
   }
@@ -141,13 +142,7 @@ const DOMManager = (function () {
   function clearCurrentProject() {
     clearCurrentProjectTasks();
     const currentProj = document.querySelector('.current-project');
-    if (currentProj) projectList.removeChild(currentProj);
-  }
-
-  function toggleInputWindow(bool) {
-    bool
-      ? (inputWindow.style.display = '')
-      : (inputWindow.style.display = 'none');
+    if (currentProj) projectNav.removeChild(currentProj);
   }
 
   function clearTask(node) {
@@ -155,12 +150,9 @@ const DOMManager = (function () {
   }
 
   const editTask = function (e) {
-    inputWindow.style.display
-      ? toggleInputWindow(true)
-      : toggleInputWindow(false);
     taskFormTitle.textContent = 'Edit Task';
     taskManager.editingTask = true;
-    const taskNode = e.target.parentNode.parentNode;
+    const taskNode = e.target.closest(".task");
     const task = taskManager.tasks.find((t) => t.id === taskNode.id);
     taskManager.targetId = task.id;
     titleInput.value = task.title;
@@ -174,13 +166,36 @@ const DOMManager = (function () {
   function addTask(task) {
     const div = document.createElement('div');
     div.id = task.id;
-    div.className = 'task';
+    div.className = 'row task mt-2 slidein';
     div.style.display = '';
+    div.addEventListener('animationend', function(e){
+      if(e.animationName === 'slidein') div.classList.remove("slidein");
+      if(e.animationName === 'slideout') {
+        taskManager.deleteTask(this);
+        clearTask(this);
+      } 
+    });
 
+    const colOne = document.createElement('div');
+    colOne.className = 'col-1';
+    const colTwo = document.createElement('div');
+    colTwo.className = 'col-7';
+    const colThree = document.createElement('div');
+    colThree.className = 'date-and-actions col-4';
+    const colFour = document.createElement('div');
+    colFour.className = 'description col-11 offset-1';
+    
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = false;
     checkbox.className = 'checkbox';
+    checkbox.addEventListener("click", function(e){
+      const taskNode = e.target.closest(".task");
+      const title = taskNode.querySelector(".task-title");
+      e.target.checked
+        ? (title.style.textDecoration = "line-through")
+        : (title.style.textDecoration = "none");
+    });
 
     const title = document.createElement('span');
     title.className = 'task-title';
@@ -190,21 +205,47 @@ const DOMManager = (function () {
     date.className = 'task-date';
     date.textContent = format(parseISO(task.date), 'MMM do');
 
+    const desc = document.createElement('div');
+    desc.className = 'collapse';
+    desc.id = `desc${task.id}`
+    const card = document.createElement('div');
+    card.className = 'card card-body task-desc'
+    card.textContent = task.description;
+    desc.appendChild(card);
+
     const actions = document.createElement('span');
     actions.className = 'actions';
-    actions.innerHTML = "<button id='edit-btn'><i class='fas fa-edit'></i></button><button id='del-btn'><i class='fas fa-trash-alt'></i></button>";
+    actions.innerHTML = "<button class='chevron' data-toggle='collapse' data-target=''><i class='fas fa-chevron-down'></i><button class='edit-btn' data-toggle='modal' data-target='#input-window'><i class='fas fa-edit'></i></button><button class='del-btn'><i class='fas fa-trash-alt'></i></button>";
+
+    const chevron = actions.querySelector('.chevron');
+    chevron.dataset.target = `#${desc.id}`;
+    chevron.addEventListener('click', (e) => {
+      if (chevron.classList.contains('collapsed')) {
+        e.target.classList.add('rotate-down');
+        e.target.classList.remove('rotate-up');
+      } else {
+        e.target.classList.add('rotate-up');
+        e.target.classList.remove('rotate-down');
+      }
+    })
+
 
     // edit button
-    actions.firstChild.addEventListener('click', editTask);
+    actions.querySelector('.edit-btn').addEventListener('click', editTask);
 
     // delete button
-    actions.lastChild.addEventListener('click', (e) => {
-      const taskNode = e.target.parentNode.parentNode;
-      taskManager.deleteTask(taskNode.id);
-      clearTask(taskNode);
+    actions.querySelector('.del-btn').addEventListener('click', (e) => {
+      const taskNode = e.target.closest('.task');
+      //taskManager.deleteTask(taskNode.id);
+      //clearTask(taskNode);
+      taskNode.classList.add('slideout');
     });
 
-    div.append(checkbox, title, date, actions);
+    colOne.appendChild(checkbox);
+    colTwo.appendChild(title);
+    colThree.append(date, actions);
+    colFour.appendChild(desc);
+    div.append(colOne, colTwo, colThree, colFour);
     taskList.appendChild(div);
   }
 
@@ -212,7 +253,7 @@ const DOMManager = (function () {
     const tasks = JSON.parse(window.localStorage.getItem('tasks'));
     if (!tasks) return;
     for (const task of tasks) {
-      DOMManager.addTask(task);
+      addTask(task);
     }
   }
 
@@ -223,12 +264,22 @@ const DOMManager = (function () {
     title.textContent = task.title;
     const date = div.querySelector('.task-date');
     date.textContent = format(parseISO(task.date), 'MMM do');
-    // let desc = div.querySelector(".task-desc");
-    // desc.textContent = task.desc;
+    let desc = div.querySelector(".task-desc");
+    desc.textContent = task.description;
   }
 
-  newProjectBtn.addEventListener('click', () => {
-    const project = prompt('Project name');
+  function loadAll(){
+    addExistingProjects();
+    addExistingTasks();
+    populateProjectDropDown();
+  }
+
+  //=====================================================
+  // Event Listeners
+  //=====================================================
+
+  projModalBtn.addEventListener('click', () => {
+    const project = projName.value;
     if (!project) return;
     projectManager.createProject(project);
     const node = addProject(project);
@@ -242,7 +293,7 @@ const DOMManager = (function () {
       clearCurrentProject();
       projectManager.deleteCurrentProject();
     }
-    swapTo(projectList.childNodes[1]);
+    swapTo(allTasks);
     populateProjectDropDown();
   });
 
@@ -252,12 +303,10 @@ const DOMManager = (function () {
     projectManager.projects.includes(projectManager.currentProject)
       ? (projectInput.value = projectManager.currentProject)
       : (projectInput.value = 'Unsorted');
-    // dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
+    dateInput.setAttribute("value",format(new Date(), "yyyy-MM-dd"));
     descInput.value = '';
-    inputWindow.style.display
-      ? toggleInputWindow(true)
-      : toggleInputWindow(false);
   });
+
   newPlaceholderBtn.addEventListener('click', () => {
     const today = new Date();
     const task = taskManager.createTask(
@@ -276,6 +325,7 @@ const DOMManager = (function () {
   unsorted.addEventListener('click', setAsCurrentProject);
 
   confirmBtn.addEventListener('click', () => {
+    if (!titleInput.value) return;
     if (taskManager.editingTask) {
       const task = taskManager.tasks.find((t) => t.id === taskManager.targetId);
       taskManager.updateTask(
@@ -290,7 +340,7 @@ const DOMManager = (function () {
       taskManager.editingTask = false;
     } else {
       const task = taskManager.createTask(
-        projectManager.currentProject,
+        projectInput.value,
         titleInput.value,
         descInput.value,
         dateInput.value,
@@ -298,16 +348,12 @@ const DOMManager = (function () {
       );
       addTask(task);
     }
-    inputWindow.style.display = 'none';
+    $('#input-window').modal('hide')
   });
 
   return {
     taskList,
-    addProject,
-    addTask,
-    addExistingProjects,
-    addExistingTasks,
-    populateProjectDropDown,
+    loadAll,
   };
 }());
 export default DOMManager;

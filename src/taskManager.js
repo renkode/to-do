@@ -1,6 +1,6 @@
 import Task from './task';
 
-export default class TaskManager {
+class TaskManager {
   constructor() {
     this.tasks = [];
     this.editingTask = '';

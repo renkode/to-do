@@ -81,6 +81,24 @@ body {
     padding-left: 10vw;
 }
 
+@media (max-width: 800px) {
+    .sidebar, #to-do {
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 450px) {
+
+
+    .sidebar {
+        min-width: 120px;
+    }
+    
+    #to-do {
+        min-width: calc(120px + 1rem);
+    }
+}
+
 .btn-span {
     flex: 1;
     margin-left: 1rem;

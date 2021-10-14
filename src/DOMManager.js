@@ -181,11 +181,11 @@ const DOMManager = (function () {
     const colOne = document.createElement('div');
     colOne.className = 'col-1';
     const colTwo = document.createElement('div');
-    colTwo.className = 'col-7';
+    colTwo.className = 'col-10 col-md-7 col-sm-11';
     const colThree = document.createElement('div');
-    colThree.className = 'date-and-actions col-4';
+    colThree.className = 'date-and-actions col-12 col-md-4 col-sm-8';
     const colFour = document.createElement('div');
-    colFour.className = 'description col-11 offset-1';
+    colFour.className = 'description col col-sm-11 offset-sm-1';
     
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -224,13 +224,16 @@ const DOMManager = (function () {
     chevron.addEventListener('click', (e) => {
       if (chevron.classList.contains('collapsed')) {
         e.target.classList.add('rotate-up');
-        e.target.classList.remove('rotate-down');
+        //e.target.classList.remove('rotate-down');
       } else {
         e.target.classList.add('rotate-down');
         e.target.classList.remove('rotate-up');
       }
     })
 
+    chevron.addEventListener('animationend', (e) => {
+      if (e.animationName === "rotate-down") e.target.classList.remove('rotate-down');
+    })
 
     // edit button
     actions.querySelector('.edit-btn').addEventListener('click', editTask);

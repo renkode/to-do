@@ -279,15 +279,19 @@ const DOMManager = (function () {
   //=====================================================
   // Event Listeners
   //=====================================================
-
+  
   newProjBtn.addEventListener('click', () => {
     projectInput.value = '';
   })
   
-  projName.addEventListener('keyup', () => {
+  projName.addEventListener('keyup', (e) => {
     projectManager.projects.includes(projName.value.toLowerCase())
       ? projectErr.style.visibility = 'visible'
       : projectErr.style.visibility = 'hidden';
+      if (e.keyCode === 13) {
+        e.preventDefault();
+        projModalBtn.click();
+      }
   });
   
   projModalBtn.addEventListener('click', () => {

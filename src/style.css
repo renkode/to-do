@@ -78,7 +78,7 @@ body {
 }
 
 .sidebar, #to-do {
-    padding-left: 5vw;
+    padding-left: 10vw;
 }
 
 .btn-span {
@@ -107,6 +107,14 @@ li {
     word-wrap: break-word;
 }
 
+hr {
+    border: none;
+    height: 1px;
+    color: rgb(102, 102, 102);
+    background-color: rgb(102, 102, 102);
+    margin: 0.5rem 0;
+}
+
 .project {
     cursor: pointer;
     text-transform: capitalize;
@@ -123,7 +131,6 @@ li {
 }
 
 .current-project {
-    font-weight: bold;
     color: #10eacf;
 }
 
@@ -212,6 +219,7 @@ h3 {
 }
 
 .task-desc {
+    color: rgb(218, 218, 218);
     background-color: rgb(53, 53, 53);
     white-space: pre-wrap;
     padding: 0 0.4em;
@@ -275,7 +283,7 @@ i {
 
 @keyframes rotate-down {
     from {
-        transform: rotate(-190deg);
+        transform: rotate(180deg);
     }
   
     to {
